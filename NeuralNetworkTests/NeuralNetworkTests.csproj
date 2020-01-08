@@ -60,10 +60,14 @@
   </Choose>
   <ItemGroup>
     <Compile Include="NeuralNetworkTests.cs" />
+    <Compile Include="PictureConverterTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="heart.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +75,10 @@
       <Project>{5E02B075-85E0-4563-8890-89611DEF8E75}</Project>
       <Name>NeuralNetwork</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\Unparazited.png" />
+    <Content Include="Images\Parazited.png" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
