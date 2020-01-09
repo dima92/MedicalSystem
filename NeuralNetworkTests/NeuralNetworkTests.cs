@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace NeuralNetwork.Tests
+namespace NeuralNetworks.Tests
 {
     [TestClass()]
     public class NeuralNetworkTests
@@ -70,7 +70,7 @@ namespace NeuralNetwork.Tests
             var testParazitizedImageInput = converter.Convert(@"C:\Users\dima-\source\repos\NeuralNetwork\NeuralNetworkTests\Images\Parazited.png");
             var testUnParazitizedImageInput = converter.Convert(@"C:\Users\dima-\source\repos\NeuralNetwork\NeuralNetworkTests\Images\Unparazited.png");
 
-            var topology = new Topology(testParazitizedImageInput.Count, 1, 0.1, testParazitizedImageInput.Count / 2);
+            var topology = new Topology(testParazitizedImageInput.Length, 1, 0.1, testParazitizedImageInput.Length / 2);
             var neuralNetwork = new NeuralNetwork(topology);
 
             double[,] parazitizedInputs = GetData(parazitizedPath, converter, testParazitizedImageInput, size);
@@ -86,14 +86,14 @@ namespace NeuralNetwork.Tests
             Assert.AreEqual(0, Math.Round(unpar.Output, 2));
         }
 
-        private static double[,] GetData(string parazitizedPath, PictureConverter converter, List<int> testImageInput, int size)
+        private static double[,] GetData(string parazitizedPath, PictureConverter converter, double[] testImageInput, int size)
         {
             var images = Directory.GetFiles(parazitizedPath);
-            var result = new double[size, testImageInput.Count];
+            var result = new double[size, testImageInput.Length];
             for (int i = 0; i < size; i++)
             {
                 var image = converter.Convert(images[i]);
-                for (int j = 0; j < image.Count; j++)
+                for (int j = 0; j < image.Length; j++)
                 {
                     result[i, j] = image[j];
                 }

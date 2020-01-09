@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NeuralNetwork
+namespace NeuralNetworks
 {
     public class NeuralNetwork
     {

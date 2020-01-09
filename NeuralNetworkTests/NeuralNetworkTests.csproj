@@ -71,9 +71,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.csproj">
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetworks.csproj">
       <Project>{5E02B075-85E0-4563-8890-89611DEF8E75}</Project>
-      <Name>NeuralNetwork</Name>
+      <Name>NeuralNetworks</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
