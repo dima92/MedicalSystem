@@ -48,7 +48,7 @@ namespace NeuralNetwork.Tests
             for (int i = 0; i < outputs.Length; i++)
             {
                 var row = NeuralNetwork.GetRow(inputs, i);
-                var res = neuralNetwork.FeedForward(row).Output;
+                var res = neuralNetwork.Predict(row).Output;
                 results.Add(res);
             }
             for (int i = 0; i < results.Count; i++)
@@ -58,47 +58,47 @@ namespace NeuralNetwork.Tests
                 Assert.AreEqual(expected, actual);
             }
         }
+
         [TestMethod()]
-        public void DatasetTest()
+        public void RecognizeImages()
         {
-            var outputs = new List<double>();
-            var inputs = new List<double[]>();
-            using (var sr = new StreamReader("heart.csv"))
-            {
-                var header = sr.ReadLine();
-                while (!sr.EndOfStream)
-                {
-                    var row = sr.ReadLine();
-                    var values = row.Split(',').Select(v => Convert.ToDouble(v.Replace(".", ","))).ToList();
-                    var output = values.Last();
-                    var input = values.Take(values.Count - 1).ToArray();
-                    outputs.Add(output);
-                    inputs.Add(input);
-                }
-            }
-            var inputSignals = new double[inputs.Count, inputs[0].Length];
-            for (int i = 0; i < inputSignals.GetLength(0); i++)
-            {
-                for (var j = 0; j < inputSignals.GetLength(1); j++)
-                {
-                    inputSignals[i, j] = inputs[i][j];
-                }
-            }
-            var topology = new Topology(outputs.Count, 1, 0.1, outputs.Count / 2);
+            var size = 1000;
+            var parazitizedPath = @"C:\Users\dima-\OneDrive\Desktop\cell_images\Parasitized\";
+            var unparazitizedPath = @"C:\Users\dima-\OneDrive\Desktop\cell_images\Uninfected\";
+
+            var converter = new PictureConverter();
+            var testParazitizedImageInput = converter.Convert(@"C:\Users\dima-\source\repos\NeuralNetwork\NeuralNetworkTests\Images\Parazited.png");
+            var testUnParazitizedImageInput = converter.Convert(@"C:\Users\dima-\source\repos\NeuralNetwork\NeuralNetworkTests\Images\Unparazited.png");
+
+            var topology = new Topology(testParazitizedImageInput.Count, 1, 0.1, testParazitizedImageInput.Count / 2);
             var neuralNetwork = new NeuralNetwork(topology);
-            var difference = neuralNetwork.Learn(outputs.ToArray(), inputSignals, 1000);
-            var results = new List<double>();
-            for (int i = 0; i < outputs.Count; i++)
+
+            double[,] parazitizedInputs = GetData(parazitizedPath, converter, testParazitizedImageInput, size);
+            neuralNetwork.Learn(new double[] { 1 }, parazitizedInputs, 1);
+
+            double[,] unparazitizedInputs = GetData(unparazitizedPath, converter, testUnParazitizedImageInput, size);
+            neuralNetwork.Learn(new double[] { 0 }, unparazitizedInputs, 1);
+
+            var par = neuralNetwork.Predict(testParazitizedImageInput.Select(t => (double)t).ToArray());
+            var unpar = neuralNetwork.Predict(testUnParazitizedImageInput.Select(t => (double)t).ToArray());
+
+            Assert.AreEqual(1, Math.Round(par.Output, 2));
+            Assert.AreEqual(0, Math.Round(unpar.Output, 2));
+        }
+
+        private static double[,] GetData(string parazitizedPath, PictureConverter converter, List<int> testImageInput, int size)
+        {
+            var images = Directory.GetFiles(parazitizedPath);
+            var result = new double[size, testImageInput.Count];
+            for (int i = 0; i < size; i++)
             {
-                var res = neuralNetwork.FeedForward(inputs[i]).Output;
-                results.Add(res);
+                var image = converter.Convert(images[i]);
+                for (int j = 0; j < image.Count; j++)
+                {
+                    result[i, j] = image[j];
+                }
             }
-            for (int i = 0; i < results.Count; i++)
-            {
-                var expected = Math.Round(outputs[i], 2);
-                var actual = Math.Round(results[i], 2);
-                Assert.AreEqual(expected, actual);
-            }
+            return result;
         }
     }
 }
